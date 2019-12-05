@@ -13,6 +13,7 @@ pypress.registerCommand("close", async (command, api) => {
   if (browser) {
     await browser.close();
   }
+  api.writeContext({ browser: null, page: null, el: null, els: null });
 });
 
 pypress.registerCommand("getDefaultPage", async (command, api) => {
