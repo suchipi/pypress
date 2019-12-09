@@ -27,6 +27,14 @@ module.exports = (pypress) => {
         throw new Error("No element selected");
       }
 
+      await el.evaluate((node) => {
+        if (node.scrollIntoViewIfNeeded) {
+          node.scrollIntoViewIfNeeded(true);
+        } else {
+          node.scrollIntoView();
+        }
+      });
+
       const rect = await el.evaluate((node) => {
         const rect = node.getBoundingClientRect();
         const { x, y, width, height } = rect;

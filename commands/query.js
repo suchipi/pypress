@@ -1,11 +1,46 @@
 const fs = require("fs");
 const sizzleScript = fs.readFileSync(require.resolve("sizzle"));
-const withinViewportScript = fs.readFileSync(require.resolve("withinviewport"));
 
 module.exports = (pypress) => {
   const py = pypress.api;
 
-  async function updateTargetUI(api) {
+  pypress.registerCommand("_loadSizzle", async (command, api) => {
+    const { page } = api.context;
+    if (!page) {
+      py.getDefaultPage();
+      py._loadSizzle(...command.args);
+      return;
+    }
+
+    py.evaluate(
+      `(function() {
+        ${sizzleScript};
+
+        Sizzle.selectors.pseudos.withText = Sizzle.selectors.createPseudo((searchTerm) => {
+          return (el) => {
+            return [
+              () => el.textContent || "",
+              () => el.innerText || "",
+              () => el.getAttribute("aria-label") || "",
+              () => el.title || "",
+              () => {
+                if (el.tagName === "INPUT" && el.type === "submit") {
+                  return el.value || "";
+                } else {
+                  return "";
+                }
+              },
+            ].some(textGetter => {
+              const maybeText = textGetter();
+              return maybeText && maybeText.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1;
+            });
+          }
+        });
+      })()`
+    );
+  });
+
+  pypress.registerCommand("_updateTargetUI", async (command, api) => {
     const { el, els, page } = api.context;
     if (!page) {
       return;
@@ -48,47 +83,10 @@ module.exports = (pypress) => {
         node.style.outline = "2px dotted red";
       });
     }
-  }
-
-  pypress.registerCommand("loadSizzle", async (command, api) => {
-    const { page } = api.context;
-    if (!page) {
-      py.getDefaultPage();
-      py.loadSizzle(...command.args);
-      return;
-    }
-
-    py.evaluate(
-      `(function() {
-        ${sizzleScript};
-        ${withinViewportScript};
-
-        Sizzle.selectors.pseudos.withText = Sizzle.selectors.createPseudo((searchTerm) => {
-          return (el) => {
-            return [
-              () => el.textContent || "",
-              () => el.innerText || "",
-              () => el.getAttribute("aria-label") || "",
-              () => el.title || "",
-              () => {
-                if (el.tagName === "INPUT" && el.type === "submit") {
-                  return el.value || "";
-                } else {
-                  return "";
-                }
-              },
-            ].some(textGetter => {
-              const maybeText = textGetter();
-              return maybeText && maybeText.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1;
-            });
-          }
-        });
-      })()`
-    );
   });
 
   pypress.registerCommand("get", async (command, api) => {
-    py.loadSizzle();
+    py._loadSizzle();
     py.then(async () => {
       const { page, within } = api.context;
       if (!page) {
@@ -103,9 +101,7 @@ module.exports = (pypress) => {
       try {
         length = await page.evaluate(
           (selector, within) => {
-            window.SizzleResult = window
-              .Sizzle(selector)
-              .filter(window.withinviewport);
+            window.SizzleResult = window.Sizzle(selector);
 
             if (within) {
               window.SizzleResult = window.SizzleResult.filter((el) =>
@@ -145,7 +141,7 @@ module.exports = (pypress) => {
         api.writeContext({ el: els[0] });
       }
 
-      updateTargetUI(api);
+      py._updateTargetUI();
 
       return els;
     });
@@ -189,7 +185,7 @@ module.exports = (pypress) => {
 
     const el = els[0];
     api.writeContext({ el, els: undefined });
-    updateTargetUI(api);
+    py._updateTargetUI();
     return el;
   });
 
@@ -201,7 +197,7 @@ module.exports = (pypress) => {
 
     const el = els[1];
     api.writeContext({ el, els: undefined });
-    updateTargetUI(api);
+    py._updateTargetUI();
     return el;
   });
 
@@ -213,7 +209,7 @@ module.exports = (pypress) => {
 
     const el = els[2];
     api.writeContext({ el, els: undefined });
-    updateTargetUI(api);
+    py._updateTargetUI();
     return el;
   });
 
@@ -225,7 +221,7 @@ module.exports = (pypress) => {
 
     const el = els[command.args[0]];
     api.writeContext({ el, els: undefined });
-    updateTargetUI(api);
+    py._updateTargetUI();
     return el;
   });
 
@@ -239,12 +235,12 @@ module.exports = (pypress) => {
 
     const el = els[els.length - 1];
     api.writeContext({ el, els: undefined });
-    updateTargetUI(api);
+    py._updateTargetUI();
     return el;
   });
 
   pypress.registerCommand("filter", async (command, api) => {
-    py.loadSizzle();
+    py._loadSizzle();
     py.then(() => {
       const { els } = api.context;
       if (!els) {
@@ -265,7 +261,7 @@ module.exports = (pypress) => {
       }
 
       api.writeContext({ els: newEls });
-      updateTargetUI(api);
+      py._updateTargetUI();
       return els;
     });
   });
@@ -320,7 +316,7 @@ module.exports = (pypress) => {
     }, selector);
 
     api.writeContext({ el: parent });
-    updateTargetUI(api);
+    py._updateTargetUI();
     return parent;
   });
 
@@ -363,7 +359,7 @@ module.exports = (pypress) => {
     const el = await page.evaluateHandle(() => document.activeElement);
 
     api.writeContext({ el });
-    updateTargetUI(api);
+    py._updateTargetUI();
     return el;
   });
 };
