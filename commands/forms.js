@@ -1,14 +1,14 @@
-const pypress = require("../pypress");
+module.exports = (pypress) => {
+  // const py = pypress.api;
 
-// const py = pypress.api;
+  pypress.registerCommand("check", async (command, api) => {
+    const { el } = api.context;
+    if (!el) {
+      throw new Error("No element selected");
+    }
 
-pypress.registerCommand("check", async (command, api) => {
-  const { el } = api.context;
-  if (!el) {
-    throw new Error("No element selected");
-  }
-
-  el.evaluate((node) => {
-    node.checked = true;
+    el.evaluate((node) => {
+      node.checked = true;
+    });
   });
-});
+};

@@ -1,17 +1,34 @@
-const py = require("./index");
-const repl = require("repl");
 const chalk = require("chalk");
+const repl = require("repl");
+const makePypress = require("./index");
+
+const py = makePypress({
+  log: (message) => {
+    switch (message.type) {
+      case "RUN": {
+        if (message.command.name === "evaluate") {
+          delete message.command.args;
+        }
+
+        console.log(chalk.blue("RUN:"), message.command);
+        break;
+      }
+      case "ERROR": {
+        console.log(
+          chalk.red("ERROR:"),
+          message.error && message.error.stack
+            ? message.error.stack
+            : message.error
+        );
+        break;
+      }
+    }
+  },
+});
 
 py.launch({ headless: false });
 
-py.onCommandRun = (command) => {
-  if (command.name === "evaluate") {
-    console.log("Run:", { name: command.name });
-  } else {
-    console.log("Run:", command);
-  }
-};
-py.onError = (error) => console.error("Error:", chalk.red(error.stack));
-
 const replServer = repl.start();
-replServer.context.py = py;
+Object.assign(replServer.context, {
+  py,
+});

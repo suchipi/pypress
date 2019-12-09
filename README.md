@@ -7,19 +7,28 @@ It's useful for writing non-test code using `cy`-like syntax.
 ## Usage
 
 ```js
-const py = require("pypress");
+// Pypress exports a `makePypress` function that you use to make a Pypress instance.
+const makePypress = require("pypress");
 
-// You will want to set up some kind of onError handler,
-// so you know when an error happens:
-py.onError = (error) => console.error(error);
+const py = makePypress({
+  // Optional: You can log every time pypress runs a command, or when an error occurs
+  log: (message) => console.log(message);
+});
 
-// Then, use py like Cypress's cy
+// Use py like Cypress's cy
 py.goto("https://google.com");
 
 py.get("input").type("test");
+
+// Once you've queued up a bunch of stuff to do, you'll want to use `py.asPromise()` to handle errors.
+// py.asPromise() returns a Promise that resolves when all the work you've queued up so far is completed,
+// and rejects if any of the work you've queued up fails.
+py.asPromise().catch((err) => {
+  console.error(err);
+});
 ```
 
-For more information, run `node -r 'pypress/repl' -e ''` to run a node repl with pypress loaded and with a browser window visible. You can use Tab to autocomplete the properties on the `py` object, to see what commands are available.
+For more information, run `npx pypress` to run a node repl with pypress loaded and with a browser window visible. You can use Tab to autocomplete the properties on the `py` object, to see what commands are available.
 
 ## License
 
