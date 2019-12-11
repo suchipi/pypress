@@ -1,4 +1,5 @@
 const puppeteer = require("puppeteer");
+const { clearPageContext } = require("./query");
 
 module.exports = (pypress) => {
   const py = pypress.api;
@@ -13,7 +14,9 @@ module.exports = (pypress) => {
     if (browser) {
       await browser.close();
     }
-    api.writeContext({ browser: null, page: null, el: null, els: null });
+
+    clearPageContext(api);
+    api.writeContext({ browser: undefined, page: undefined });
   });
 
   pypress.registerCommand("getDefaultPage", async (command, api) => {
@@ -36,6 +39,8 @@ module.exports = (pypress) => {
       return;
     }
 
+    clearPageContext(api);
+
     const page = await browser.newPage();
     api.writeContext({ page });
   });
@@ -47,6 +52,8 @@ module.exports = (pypress) => {
       py.goto(...command.args);
       return;
     }
+
+    clearPageContext(api);
 
     await page.goto(...command.args);
   });
@@ -93,10 +100,12 @@ module.exports = (pypress) => {
 
     switch (command.args[0]) {
       case "back": {
+        clearPageContext(api);
         await page.goBack();
         break;
       }
       case "forward": {
+        clearPageContext(api);
         await page.goForward();
         break;
       }
@@ -132,8 +141,9 @@ module.exports = (pypress) => {
   });
 
   pypress.registerCommand("reload", async (command, api) => {
+    clearPageContext(api);
     // eslint-disable-next-line no-self-assign
-    py.evaluate(() => (location = location));
+    py.evaluate(() => location.reload());
   });
 
   pypress.registerCommand("scrollIntoView", async (command, api) => {

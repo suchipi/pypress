@@ -41,47 +41,51 @@ module.exports = (pypress) => {
   });
 
   pypress.registerCommand("_updateTargetUI", async (command, api) => {
-    const { el, els, page } = api.context;
-    if (!page) {
-      return;
-    }
-
-    await page.evaluate(() => {
-      var Py = (window.Pypress = window.Pypress || {});
-
-      if (Py.els) {
-        Py.els.forEach((el) => {
-          el.style.outline = el.originalOutline || "";
-        });
+    try {
+      const { el, els, page } = api.context;
+      if (!page) {
+        return;
       }
-      Py.els = [];
 
-      if (Py.el) {
-        Py.el.style.outline = Py.el.originalOutline || "";
+      await page.evaluate(() => {
+        var Py = (window.Pypress = window.Pypress || {});
+
+        if (Py.els) {
+          Py.els.forEach((el) => {
+            el.style.outline = el.originalOutline || "";
+          });
+        }
+        Py.els = [];
+
+        if (Py.el) {
+          Py.el.style.outline = Py.el.originalOutline || "";
+        }
+        Py.el = null;
+      });
+
+      if (els) {
+        for (const el of els) {
+          await el.evaluate((node) => {
+            var Py = window.Pypress;
+            Py.els.push(node);
+
+            node.originalOutline = node.style.outline;
+            node.style.outline = "2px dotted yellow";
+          });
+        }
       }
-      Py.el = null;
-    });
 
-    if (els) {
-      for (const el of els) {
+      if (el) {
         await el.evaluate((node) => {
           var Py = window.Pypress;
-          Py.els.push(node);
+          Py.el = node;
 
           node.originalOutline = node.style.outline;
-          node.style.outline = "2px dotted yellow";
+          node.style.outline = "2px dotted red";
         });
       }
-    }
-
-    if (el) {
-      await el.evaluate((node) => {
-        var Py = window.Pypress;
-        Py.el = node;
-
-        node.originalOutline = node.style.outline;
-        node.style.outline = "2px dotted red";
-      });
+    } catch (err) {
+      // ignore
     }
   });
 
@@ -361,5 +365,14 @@ module.exports = (pypress) => {
     api.writeContext({ el });
     py._updateTargetUI();
     return el;
+  });
+};
+
+module.exports.clearPageContext = (api) => {
+  api.writeContext({
+    el: undefined,
+    els: undefined,
+    within: undefined,
+    exists: undefined,
   });
 };
