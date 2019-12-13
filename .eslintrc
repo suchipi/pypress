@@ -5,5 +5,14 @@
     "es6": true,
     "jest": true,
     "browser": true
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/*.test.js"],
+      "globals": {
+        "py": "readonly",
+        "FIXTURES": "readonly"
+      }
+    }
+  ]
 }

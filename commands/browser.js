@@ -62,7 +62,6 @@ module.exports = (pypress) => {
     const { page } = api.context;
     if (!page) {
       py.getDefaultPage();
-      py.goto(...command.args);
       return;
     }
 
@@ -120,7 +119,7 @@ module.exports = (pypress) => {
   });
 
   pypress.registerCommand("location", async (command, api) => {
-    py.evaluate(() => {
+    let ret = py.evaluate(() => {
       return {
         hash: location.hash,
         host: location.host,
@@ -136,8 +135,10 @@ module.exports = (pypress) => {
     });
 
     if (command.args[0]) {
-      py.its(command.args[0]);
+      ret = py.its(command.args[0]);
     }
+
+    return ret;
   });
 
   pypress.registerCommand("reload", async (command, api) => {
