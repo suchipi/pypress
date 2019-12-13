@@ -245,7 +245,7 @@ module.exports = (pypress) => {
 
   pypress.registerCommand("filter", async (command, api) => {
     py._loadSizzle();
-    py.then(() => {
+    py.then(async () => {
       const { els } = api.context;
       if (!els) {
         throw new Error("No elements selected");
@@ -255,7 +255,7 @@ module.exports = (pypress) => {
       const newEls = [];
 
       for (const el of els) {
-        const isIn = el.evaluate((node) => {
+        const isIn = await el.evaluate((node, selector) => {
           const results = window.Sizzle(selector);
           return results.indexOf(node) != -1;
         }, selector);
