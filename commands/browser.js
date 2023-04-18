@@ -119,7 +119,7 @@ module.exports = (pypress) => {
   });
 
   pypress.registerCommand("location", async (command, api) => {
-    let ret = py.evaluate(() => {
+    let serializedLocation = py.evaluate(() => {
       return {
         hash: location.hash,
         host: location.host,
@@ -130,12 +130,39 @@ module.exports = (pypress) => {
         port: location.port,
         protocol: location.protocol,
         search: location.search,
-        toString: location.toString(),
+        __toStringResult: location.toString(),
       };
     });
 
+    const {
+      hash,
+      host,
+      hostname,
+      href,
+      origin,
+      pathname,
+      port,
+      protocol,
+      search,
+    } = serializedLocation;
+
+    const location = {
+      hash,
+      host,
+      hostname,
+      href,
+      origin,
+      pathname,
+      port,
+      protocol,
+      search,
+      toString: () => ret.__toStringResult
+    };
+
+    let ret = location;
+
     if (command.args[0]) {
-      ret = py.its(command.args[0]);
+      ret = location[command.args[0]];
     }
 
     return ret;
