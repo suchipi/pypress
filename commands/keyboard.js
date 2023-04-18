@@ -123,6 +123,6 @@ module.exports = (pypress) => {
     }
 
     await page.evaluate(() => document.execCommand("selectall", false, null));
-    await page.keyboard.down("Backspace");
+    await page.keyboard.press("Backspace");
   });
 };
