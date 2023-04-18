@@ -58,6 +58,7 @@ export interface Pypress<Context extends {} = {}> {
   launch(options?: {
     env?: { [key: string]: string | number | undefined };
     product?: "chrome" | "firefox";
+    headless?: boolean;
   }): Ret<Context, { browser: Browser }>;
   close(): Ret<Context, { browser: undefined; page: undefined }>;
   getDefaultPage(): Ret<Context, BrowserAndPage>;
@@ -237,6 +238,8 @@ export interface Pypress<Context extends {} = {}> {
 
   // --- should ---
   should(assertion: "navigate"): Ret<Context, BrowserAndPage>;
+
+  asPromise(): Promise<void>;
 }
 
 function makePypress(options?: { log?: (...args: any) => void }): Pypress;
