@@ -1,0 +1,6 @@
+jest
+jest.config.js
+fixtures
+**/*.test.js
+.eslintrc
+.prettierrc
