@@ -1,4 +1,8 @@
-module.exports = (pypress) => {
+import type { Pypress } from "../pypress";
+
+declare var document: any;
+
+export default (pypress: Pypress) => {
   const py = pypress.api;
 
   pypress.registerCommand("focus", async (command, api) => {
@@ -37,14 +41,14 @@ module.exports = (pypress) => {
       });
     }
 
-    await page.keyboard.type(command.args[0]);
+    await page.keyboard.type(...command.args);
   });
 
   pypress.registerCommand("keyPress", async (command, api) => {
     let { page, el } = api.context;
     if (!page) {
       py.getDefaultPage();
-      py.keypress(...command.args);
+      py.keyPress(...command.args);
       return;
     }
 
@@ -54,14 +58,14 @@ module.exports = (pypress) => {
       });
     }
 
-    await page.keyboard.press(command.args[0]);
+    await page.keyboard.press(...command.args);
   });
 
   pypress.registerCommand("keyDown", async (command, api) => {
     let { page, el } = api.context;
     if (!page) {
       py.getDefaultPage();
-      py.keydown(...command.args);
+      py.keyDown(...command.args);
       return;
     }
 
@@ -71,14 +75,14 @@ module.exports = (pypress) => {
       });
     }
 
-    await page.keyboard.down(command.args[0]);
+    await page.keyboard.down(...command.args);
   });
 
   pypress.registerCommand("keyUp", async (command, api) => {
     let { page, el } = api.context;
     if (!page) {
       py.getDefaultPage();
-      py.keyup(...command.args);
+      py.keyUp(...command.args);
       return;
     }
 
@@ -88,7 +92,7 @@ module.exports = (pypress) => {
       });
     }
 
-    await page.keyboard.up(command.args[0]);
+    await page.keyboard.up(...command.args);
   });
 
   pypress.registerCommand("keyCharacter", async (command, api) => {
@@ -105,7 +109,7 @@ module.exports = (pypress) => {
       });
     }
 
-    await page.keyboard.sendCharacter(command.args[0]);
+    await page.keyboard.sendCharacter(...command.args);
   });
 
   pypress.registerCommand("clear", async (command, api) => {

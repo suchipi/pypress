@@ -1,12 +1,13 @@
-module.exports = (pypress) => {
+import type { Pypress } from "../pypress";
+
+export default (pypress: Pypress) => {
   const py = pypress.api;
 
   pypress.registerCommand("clearCookie", async (command, api) => {
     let { page } = api.context;
     if (!page) {
       py.getDefaultPage();
-      py.clearCookie(...command.args);
-      return;
+      return py.clearCookie(...command.args);
     }
 
     await page.deleteCookie({ name: command.args[0] });
@@ -16,8 +17,7 @@ module.exports = (pypress) => {
     let { page } = api.context;
     if (!page) {
       py.getDefaultPage();
-      py.clearCookies(...command.args);
-      return;
+      return py.clearCookies(...command.args);
     }
 
     const cookies = await page.cookies();
@@ -30,8 +30,7 @@ module.exports = (pypress) => {
     let { page } = api.context;
     if (!page) {
       py.getDefaultPage();
-      py.getCookies(...command.args);
-      return;
+      return py.getCookies(...command.args);
     }
 
     const cookies = await page.cookies();
@@ -40,9 +39,7 @@ module.exports = (pypress) => {
   });
 
   pypress.registerCommand("getCookie", async (command, api) => {
-    py.getCookies();
-    py.then(({ cookies }) => {
-      return cookies.find((cookie) => cookie.name === command.args[0]) || null;
-    });
+    const cookies = await py.getCookies();
+    return cookies.find((cookie) => cookie.name === command.args[0]) || null;
   });
 };

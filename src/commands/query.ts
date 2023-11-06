@@ -2,11 +2,14 @@ import fs from "fs";
 import type { Pypress } from "../pypress";
 import { sleep } from "a-mimir";
 import { ElementHandle } from "puppeteer";
+import type { ChainHelpers } from "cypress-style-async";
+import type { ChainContext } from "../types";
 
 const sizzleScript = fs.readFileSync(require.resolve("sizzle"));
 
 // to make typescript quiet
 declare var window: any;
+declare var document: any;
 
 export default (pypress: Pypress) => {
   const py = pypress.api;
@@ -329,15 +332,15 @@ export default (pypress: Pypress) => {
       throw new Error("No element selected");
     }
 
+    const [callback] = command.args;
+
     api.writeContext({ within: el });
 
-    await command.args[0](api.context);
+    const result = await callback(el);
 
-    py.then(() => {
-      api.writeContext({ within: null });
-    });
+    api.writeContext({ within: undefined });
 
-    return el;
+    return result;
   });
 
   pypress.registerCommand("find", async (command, api) => {
@@ -346,8 +349,8 @@ export default (pypress: Pypress) => {
       throw new Error("No element selected");
     }
 
-    py.within(() => {
-      py.get(...command.args);
+    return py.within(() => {
+      return py.get(...command.args);
     });
   });
 
@@ -355,19 +358,18 @@ export default (pypress: Pypress) => {
     const { page } = api.context;
     if (!page) {
       py.getDefaultPage();
-      py.focused(...command.args);
-      return;
+      return py.focused(...command.args);
     }
 
     const el = await page.evaluateHandle(() => document.activeElement);
 
     api.writeContext({ el });
-    py._updateTargetUI();
+    await py._updateTargetUI();
     return el;
   });
 };
 
-module.exports.clearPageContext = (api) => {
+export const clearPageContext = (api: ChainHelpers<ChainContext>) => {
   api.writeContext({
     el: undefined,
     els: undefined,

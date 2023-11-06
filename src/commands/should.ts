@@ -1,8 +1,11 @@
-module.exports = (pypress) => {
+import type { Pypress } from "../pypress";
+
+export default (pypress: Pypress) => {
   const py = pypress.api;
 
   pypress.registerCommand("should", async (command, api) => {
-    py[`should:${command.args[0]}`](...command.args.slice(1));
+    const [name, ...rest] = command.args as Array<any>;
+    py[`should:${name}`](...rest);
   });
 
   pypress.registerCommand("should:navigate", async (command, api) => {

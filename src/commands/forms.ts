@@ -1,6 +1,6 @@
-module.exports = (pypress) => {
-  // const py = pypress.api;
+import type { Pypress } from "../pypress";
 
+export default (pypress: Pypress) => {
   pypress.registerCommand("check", async (command, api) => {
     const { el } = api.context;
     if (!el) {

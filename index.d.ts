@@ -1,6 +1,26 @@
-import { Browser, Page, ElementHandle, KeyInput } from "puppeteer";
+import type {
+  Browser,
+  Page,
+  ElementHandle,
+  KeyInput,
+  PuppeteerLaunchOptions,
+  KeyboardTypeOptions,
+  KeyPressOptions,
+  KeyDownOptions,
+} from "puppeteer";
 
-type Cookie = ReturnType<Page["cookies"]> extends Promise<Array<infer R>>
+export type {
+  Browser,
+  Page,
+  ElementHandle,
+  KeyInput,
+  PuppeteerLaunchOptions,
+  KeyboardTypeOptions,
+  KeyPressOptions,
+  KeyDownOptions,
+};
+
+export type Cookie = ReturnType<Page["cookies"]> extends Promise<Array<infer R>>
   ? R
   : never;
 
@@ -71,12 +91,12 @@ export interface Pypress<Context extends {} = {}> {
     ...args: Parameters<Page["evaluateHandle"]>
   ): Ret<Context, Returned<any>>;
   go(
-    direction: "back" | "forward"
+    direction: "back" | "forward",
   ): Ret<Context, BrowserAndPage & ClearPageContext>;
   hash(): Ret<Context, BrowserAndPage & Returned<string>>;
   location(): Ret<Context, BrowserAndPage & Returned<Location>>;
   location<Key extends keyof Location>(
-    property: Key
+    property: Key,
   ): Ret<Context, BrowserAndPage & Returned<Location[Key]>>;
   reload(): Ret<Context, BrowserAndPage & ClearPageContext>;
   scrollIntoView: Context extends ElContext ? () => Ret<Context> : never;
@@ -89,7 +109,7 @@ export interface Pypress<Context extends {} = {}> {
   invoke: Context extends Returned<object>
     ? <
         Key extends keyof Context["lastReturnValue"],
-        Value = Context["lastReturnValue"][Key]
+        Value = Context["lastReturnValue"][Key],
       >(
         key: Key,
         ...params: Value extends Callable ? Parameters<Value> : []
@@ -100,9 +120,9 @@ export interface Pypress<Context extends {} = {}> {
   its: Context extends Returned<object>
     ? <
         Key extends keyof Context["lastReturnValue"],
-        Value = Context["lastReturnValue"][Key]
+        Value = Context["lastReturnValue"][Key],
       >(
-        key: Key
+        key: Key,
       ) => Ret<Context, Returned<Value>>
     : never;
 
@@ -111,7 +131,7 @@ export interface Pypress<Context extends {} = {}> {
   clearCookies(): Ret<Context>;
   getCookies(): Ret<Context, { cookies: Array<Cookie> }>;
   getCookie(
-    name: string
+    name: string,
   ): Ret<Context, { cookies: Array<Cookie> } & Returned<Cookie | null>>;
 
   // --- forms ---
@@ -147,7 +167,7 @@ export interface Pypress<Context extends {} = {}> {
   then(callback: (context: Context) => void | Promise<void>): Ret<Context>;
   debug(): Ret<Context>;
   exec(
-    cmd: string
+    cmd: string,
   ): Ret<
     Context,
     Returned<{ code: number | null; stdout: Buffer; stderr: Buffer }>
@@ -184,19 +204,19 @@ export interface Pypress<Context extends {} = {}> {
   get(selector: string): Ret<Context, ElContext & ElsContext>;
   get(
     selector: string,
-    options: { allowNonExistent?: boolean }
+    options: { allowNonExistent?: boolean },
   ): Ret<Context, ElContext & { el: undefined } & ElsContext>;
   get(
     selector: string,
-    options: { allowNonExistent: false }
+    options: { allowNonExistent: false },
   ): Ret<Context, ElContext & ElsContext>;
   get(
     selector: string,
-    options: { allowNonExistent: true }
+    options: { allowNonExistent: true },
   ): Ret<Context, ElContext & { el: undefined } & ElsContext>;
 
   checkIfExists(
-    selector: string
+    selector: string,
   ): Ret<
     Context,
     | (ElsContext & ElContext & { exists: true })
@@ -228,7 +248,7 @@ export interface Pypress<Context extends {} = {}> {
   /** scope things so that query calls within the callback only find things within the current context.el */
   within: Context extends ElContext
     ? (
-        callback: (context: Context) => void | Promise<void>
+        callback: (context: Context) => void | Promise<void>,
       ) => Ret<Context, Returned<ElementHandle>>
     : never;
   /** query for elements that are descendants of the current context.el */
@@ -242,6 +262,8 @@ export interface Pypress<Context extends {} = {}> {
   asPromise(): Promise<void>;
 }
 
-function makePypress(options?: { log?: (...args: any) => void }): Pypress;
+declare function makePypress(options?: {
+  log?: (...args: any) => void;
+}): Pypress;
 
-export = makePypress;
+export { makePypress };

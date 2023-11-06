@@ -1,13 +1,18 @@
-import { Pypress } from "../pypress";
 import puppeteer from "puppeteer";
+import { sleep } from "a-mimir";
+import type { Pypress } from "../pypress";
 import { clearPageContext } from "./query";
+import { Location } from "../types";
 
-module.exports = (pypress: Pypress) => {
+declare var location: any;
+
+export default (pypress: Pypress) => {
   const py = pypress.api;
 
   pypress.registerCommand("launch", async (command, api) => {
     const browser = await puppeteer.launch(command.args[0] || {});
     api.writeContext({ browser });
+    return browser;
   });
 
   pypress.registerCommand("close", async (command, api) => {
@@ -24,53 +29,53 @@ module.exports = (pypress: Pypress) => {
     const { browser } = api.context;
     if (!browser) {
       py.launch();
-      py.getDefaultPage();
-      return;
+      return py.getDefaultPage();
     }
 
     const page = (await browser.pages())[0];
     api.writeContext({ page });
+    return page;
   });
 
   pypress.registerCommand("newPage", async (command, api) => {
     const { browser } = api.context;
     if (!browser) {
       py.launch();
-      py.newPage();
-      return;
+      return py.newPage();
     }
 
     clearPageContext(api);
 
     const page = await browser.newPage();
     api.writeContext({ page });
+    return page;
   });
 
   pypress.registerCommand("goto", async (command, api) => {
     const { page } = api.context;
     if (!page) {
       py.getDefaultPage();
-      py.goto(...command.args);
-      return;
+      return py.goto(...command.args);
     }
 
     clearPageContext(api);
 
     await page.goto(...command.args);
+    return page;
   });
 
   pypress.registerCommand("evaluate", async (command, api) => {
     const { page } = api.context;
     if (!page) {
       py.getDefaultPage();
-      return;
+      return py.evaluate(...command.args);
     }
 
-    let result;
+    let result: any;
     try {
       result = await page.evaluate(...command.args);
-    } catch (error) {
-      await api.sleep(100);
+    } catch (error: any) {
+      await sleep.async(100);
       api.retry({ error, maxRetries: 10 });
     }
 
@@ -81,12 +86,10 @@ module.exports = (pypress: Pypress) => {
     const { page } = api.context;
     if (!page) {
       py.getDefaultPage();
-      py.goto(...command.args);
-      return;
+      return py.evaluateHandle(...command.args);
     }
 
-    const result = await page.evaluateHandle(...command.args);
-
+    const result: any = await page.evaluateHandle(...command.args);
     return result;
   });
 
@@ -94,8 +97,7 @@ module.exports = (pypress: Pypress) => {
     const { page } = api.context;
     if (!page) {
       py.getDefaultPage();
-      py.go(...command.args);
-      return;
+      return py.go(...command.args);
     }
 
     switch (command.args[0]) {
@@ -116,11 +118,11 @@ module.exports = (pypress: Pypress) => {
   });
 
   pypress.registerCommand("hash", async (command, api) => {
-    py.evaluate(() => location.hash);
+    return py.evaluate(() => location.hash);
   });
 
   pypress.registerCommand("location", async (command, api) => {
-    let serializedLocation = py.evaluate(() => {
+    let serializedLocation = await py.evaluate(() => {
       return {
         hash: location.hash,
         host: location.host,
@@ -145,9 +147,10 @@ module.exports = (pypress: Pypress) => {
       port,
       protocol,
       search,
+      __toStringResult,
     } = serializedLocation;
 
-    const location = {
+    const location: Location = {
       hash,
       host,
       hostname,
@@ -157,22 +160,19 @@ module.exports = (pypress: Pypress) => {
       port,
       protocol,
       search,
-      toString: () => ret.__toStringResult,
+      toString: () => __toStringResult,
     };
 
-    let ret = location;
-
     if (command.args[0]) {
-      ret = location[command.args[0]];
+      return location[command.args[0]] as any;
+    } else {
+      return location as any;
     }
-
-    return ret;
   });
 
   pypress.registerCommand("reload", async (command, api) => {
     clearPageContext(api);
-    // eslint-disable-next-line no-self-assign
-    py.evaluate(() => location.reload());
+    await py.evaluate(() => location.reload());
   });
 
   pypress.registerCommand("scrollIntoView", async (command, api) => {

@@ -1,10 +1,12 @@
-const child_process = require("child_process");
+import { sleep } from "a-mimir";
+import child_process from "child_process";
+import type { Pypress } from "../pypress";
 
-module.exports = (pypress) => {
+export default (pypress: Pypress) => {
   const py = pypress.api;
 
   pypress.registerCommand("sleep", async (command, api) => {
-    await api.sleep(command.args[0] || 100);
+    await sleep.async(command.args[0] || 100);
   });
 
   pypress.registerCommand("logContext", async (command, api) => {
@@ -15,12 +17,12 @@ module.exports = (pypress) => {
     }
   });
 
-  pypress.registerCommand("then", async (command, api) => {
-    await command.args[0](api.context);
+  pypress.registerCommand("getContext", async (command, api) => {
+    return api.context;
   });
 
   pypress.registerCommand("debug", async (command, api) => {
-    py.then((context) => {
+    py.getContext().then((context) => {
       debugger;
     });
   });

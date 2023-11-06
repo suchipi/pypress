@@ -1,6 +1,6 @@
-module.exports = (pypress) => {
-  // const py = pypress.api;
+import type { Pypress } from "../pypress";
 
+export default (pypress: Pypress) => {
   pypress.registerCommand("each", async (command, api) => {
     const array = api.context.lastReturnValue;
     for (const item of array) {

@@ -1,4 +1,14 @@
 import { Pypress } from "./pypress";
+import browser from "./commands/browser";
+import chaining from "./commands/chaining";
+import cookies from "./commands/cookies";
+import forms from "./commands/forms";
+import keyboard from "./commands/keyboard";
+import storage from "./commands/local-storage";
+import misc from "./commands/misc";
+import mouse from "./commands/mouse";
+import query from "./commands/query";
+import should from "./commands/should";
 
 export function makePypress({
   log = () => {},
@@ -6,16 +16,16 @@ export function makePypress({
   const pypress = new Pypress({ log });
 
   [
-    require("./commands/browser"),
-    require("./commands/chaining"),
-    require("./commands/cookies"),
-    require("./commands/forms"),
-    require("./commands/keyboard"),
-    require("./commands/local-storage"),
-    require("./commands/misc"),
-    require("./commands/mouse"),
-    require("./commands/query"),
-    require("./commands/should"),
+    browser,
+    chaining,
+    cookies,
+    forms,
+    keyboard,
+    storage,
+    misc,
+    mouse,
+    query,
+    should,
   ].forEach((builder) => {
     builder(pypress);
   });

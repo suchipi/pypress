@@ -1,6 +1,23 @@
-import { Browser, Page, ElementHandle, KeyInput } from "puppeteer";
+import type {
+  Browser,
+  Page,
+  ElementHandle,
+  KeyInput,
+  PuppeteerLaunchOptions,
+  KeyboardTypeOptions,
+  KeyPressOptions,
+  KeyDownOptions,
+} from "puppeteer";
 
-export type { Browser, Page, ElementHandle, KeyInput };
+export type {
+  Browser,
+  Page,
+  ElementHandle,
+  KeyInput,
+  PuppeteerLaunchOptions,
+  KeyboardTypeOptions,
+  KeyPressOptions,
+};
 
 export type Cookie = ReturnType<Page["cookies"]> extends Promise<Array<infer R>>
   ? R
@@ -13,6 +30,7 @@ export type ChainContext = Partial<{
   els: Array<ElementHandle>;
   exists: boolean;
   within: ElementHandle;
+  cookies: Array<Cookie>;
 }>;
 
 export type Location = {
@@ -30,11 +48,7 @@ export type Location = {
 
 export type CommandsMap = {
   // --- browser ---
-  launch(options?: {
-    env?: { [key: string]: string | number | undefined };
-    product?: "chrome" | "firefox";
-    headless?: boolean;
-  }): Promise<Browser>;
+  launch(options?: PuppeteerLaunchOptions): Promise<Browser>;
   close(): Promise<void>;
   getDefaultPage(): Promise<Page>;
   newPage(): Promise<Page>;
@@ -49,16 +63,16 @@ export type CommandsMap = {
   scrollIntoView(): Promise<void>;
 
   // --- chaining ---
-  each(): Promise<void>;
+  each(callback: (item: any) => void | Promise<void>): Promise<Array<any>>;
   end(): Promise<null>;
-  invoke(): Promise<any>;
-  its(): Promise<any>;
+  invoke(method: string, ...args: Array<any>): Promise<any>;
+  its(key: string): Promise<any>;
 
   // --- cookies ---
   clearCookie(name: string): Promise<void>;
   clearCookies(): Promise<void>;
   getCookies(): Promise<Array<Cookie>>;
-  getCookie(name: string): Promise<Cookie>;
+  getCookie(name: string): Promise<Cookie | null>;
 
   // --- forms ---
   check(): Promise<void>;
@@ -66,9 +80,9 @@ export type CommandsMap = {
   // --- keyboard ---
   focus(): Promise<void>;
   blur(): Promise<void>;
-  type(text: string): Promise<void>;
-  keyPress(key: KeyInput): Promise<void>;
-  keyDown(key: KeyInput): Promise<void>;
+  type(text: string, options?: KeyboardTypeOptions): Promise<void>;
+  keyPress(key: KeyInput, options?: KeyPressOptions): Promise<void>;
+  keyDown(key: KeyInput, options?: KeyDownOptions): Promise<void>;
   keyUp(key: KeyInput): Promise<void>;
   keyCharacter(char: string): Promise<void>;
   clear(): Promise<void>;
@@ -80,6 +94,7 @@ export type CommandsMap = {
   sleep(ms?: number): Promise<void>;
   logContext(): Promise<void>;
   logContext(key: keyof ChainContext): Promise<void>;
+  getContext(): Promise<ChainContext>;
   debug(): Promise<void>;
   exec(
     cmd: string,
@@ -94,6 +109,9 @@ export type CommandsMap = {
     (elementQuery: string): Promise<void>;
     /** Move the mouse to the specified position and then click. */
     (posX: number, posY: number): Promise<void>;
+
+    // internal intersection because Paramaters helper type is being annoying
+    (selectorOrX?: string | number, posY?: number): Promise<void>;
   };
   rightClick: CommandsMap["click"]; // same type signature
   middleClick: CommandsMap["click"]; // same type signature
@@ -147,7 +165,7 @@ export type CommandsMap = {
   /** search up through parents for first one that matches this selector */
   closest(selector: string): Promise<ElementHandle>;
   /** scope things so that query calls within the callback only find things within the current context.el */
-  within<R>(callback: (el: ElementHandle) => R | Promise<R>): Promise<R>;
+  within(callback: (el: ElementHandle) => any): Promise<any>;
   /** query for elements that are descendants of the current context.el */
   find: CommandsMap["get"]; // same signature
   /** Set context.el to document.activeElement */
@@ -156,4 +174,7 @@ export type CommandsMap = {
   // --- should ---
   // TODO: support more than just navigate, via chai, like cypress does
   should(assertion: "navigate"): Promise<void>;
+
+  /** internal */
+  ["should:navigate"](): Promise<void>;
 };

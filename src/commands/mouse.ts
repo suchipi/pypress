@@ -1,19 +1,21 @@
-module.exports = (pypress) => {
+import type { Pypress } from "../pypress";
+
+export default (pypress: Pypress) => {
   const py = pypress.api;
 
   pypress.registerCommand("click", async (command, api) => {
     const { page } = api.context;
     if (!page) {
       throw new Error(
-        "No page present; I need a page to move the mouse so I can click"
+        "No page present; I need a page to move the mouse so I can click",
       );
     }
 
     if (command.args.length === 1) {
-      py.get(command.args[0]).click();
+      py.get(command.args[0] as string).click();
       return;
     } else if (command.args.length === 2) {
-      const [posX, posY] = command.args;
+      const [posX, posY] = command.args as [number, number];
       const mouse = page.mouse;
       await mouse.move(posX, posY);
       await mouse.click(posX, posY, {
@@ -57,15 +59,15 @@ module.exports = (pypress) => {
     const { page } = api.context;
     if (!page) {
       throw new Error(
-        "No page present; I need a page to move the mouse so I can click"
+        "No page present; I need a page to move the mouse so I can click",
       );
     }
 
     if (command.args.length === 1) {
-      py.get(command.args[0]).click();
+      py.get(command.args[0] as string).click();
       return;
     } else if (command.args.length === 2) {
-      const [posX, posY] = command.args;
+      const [posX, posY] = command.args as [number, number];
       const mouse = page.mouse;
       await mouse.move(posX, posY);
       await mouse.click(posX, posY, {
@@ -78,6 +80,14 @@ module.exports = (pypress) => {
       if (!el) {
         throw new Error("No element selected");
       }
+
+      await el.evaluate((node) => {
+        if (node.scrollIntoViewIfNeeded) {
+          node.scrollIntoViewIfNeeded(true);
+        } else {
+          node.scrollIntoView();
+        }
+      });
 
       const rect = await el.evaluate((node) => {
         const rect = node.getBoundingClientRect();
@@ -101,15 +111,15 @@ module.exports = (pypress) => {
     const { page } = api.context;
     if (!page) {
       throw new Error(
-        "No page present; I need a page to move the mouse so I can click"
+        "No page present; I need a page to move the mouse so I can click",
       );
     }
 
     if (command.args.length === 1) {
-      py.get(command.args[0]).click();
+      py.get(command.args[0] as string).click();
       return;
     } else if (command.args.length === 2) {
-      const [posX, posY] = command.args;
+      const [posX, posY] = command.args as [number, number];
       const mouse = page.mouse;
       await mouse.move(posX, posY);
       await mouse.click(posX, posY, {
@@ -122,6 +132,14 @@ module.exports = (pypress) => {
       if (!el) {
         throw new Error("No element selected");
       }
+
+      await el.evaluate((node) => {
+        if (node.scrollIntoViewIfNeeded) {
+          node.scrollIntoViewIfNeeded(true);
+        } else {
+          node.scrollIntoView();
+        }
+      });
 
       const rect = await el.evaluate((node) => {
         const rect = node.getBoundingClientRect();
@@ -148,10 +166,10 @@ module.exports = (pypress) => {
     }
 
     if (command.args.length === 1) {
-      py.get(command.args[0]).hover();
+      py.get(command.args[0] as string).hover();
       return;
     } else if (command.args.length === 2) {
-      const [posX, posY] = command.args;
+      const [posX, posY] = command.args as [number, number];
       const mouse = page.mouse;
       await mouse.move(posX, posY);
     } else {
@@ -159,6 +177,14 @@ module.exports = (pypress) => {
       if (!el) {
         throw new Error("No element selected");
       }
+
+      await el.evaluate((node) => {
+        if (node.scrollIntoViewIfNeeded) {
+          node.scrollIntoViewIfNeeded(true);
+        } else {
+          node.scrollIntoView();
+        }
+      });
 
       const rect = await el.evaluate((node) => {
         const rect = node.getBoundingClientRect();
