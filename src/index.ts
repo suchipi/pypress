@@ -1,6 +1,8 @@
-const Pypress = require("./pypress");
+import { Pypress } from "./pypress";
 
-module.exports = function makePypress({ log = () => {} } = {}) {
+export function makePypress({
+  log = () => {},
+}: { log?: (...args: any) => void } = {}) {
   const pypress = new Pypress({ log });
 
   [
@@ -21,4 +23,4 @@ module.exports = function makePypress({ log = () => {} } = {}) {
   const py = pypress.api;
 
   return py;
-};
+}

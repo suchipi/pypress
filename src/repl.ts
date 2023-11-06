@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-const chalk = require("chalk");
-const repl = require("repl");
-const makePypress = require("./index");
+import chalk from "chalk";
+import repl from "repl";
+import { makePypress } from "./index";
 
 const py = makePypress({
   log: (message) => {
@@ -19,7 +19,7 @@ const py = makePypress({
           chalk.red("ERROR:"),
           message.error && message.error.stack
             ? message.error.stack
-            : message.error
+            : message.error,
         );
         break;
       }

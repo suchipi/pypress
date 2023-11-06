@@ -8,16 +8,17 @@
   "types": "index.d.ts",
   "license": "MIT",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "rm -rf dist && tsc"
   },
   "dependencies": {
+    "a-mimir": "^1.0.1",
     "chalk": "^4.1.2",
     "cypress-style-async": "^2.0.0",
     "puppeteer": "^21.5.0",
     "sizzle": "^2.3.10"
   },
   "devDependencies": {
-    "a-mimir": "^1.0.1",
     "http-server": "^14.1.1",
     "jest": "^29.7.0",
     "prettier": "^3.0.3",

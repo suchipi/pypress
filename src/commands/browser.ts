@@ -1,7 +1,8 @@
-const puppeteer = require("puppeteer");
-const { clearPageContext } = require("./query");
+import { Pypress } from "../pypress";
+import puppeteer from "puppeteer";
+import { clearPageContext } from "./query";
 
-module.exports = (pypress) => {
+module.exports = (pypress: Pypress) => {
   const py = pypress.api;
 
   pypress.registerCommand("launch", async (command, api) => {
@@ -156,7 +157,7 @@ module.exports = (pypress) => {
       port,
       protocol,
       search,
-      toString: () => ret.__toStringResult
+      toString: () => ret.__toStringResult,
     };
 
     let ret = location;
