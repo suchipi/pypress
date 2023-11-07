@@ -8,7 +8,7 @@ export default (pypress: Pypress) => {
     }
 
     el.evaluate((node) => {
-      node.checked = true;
+      (node as HTMLInputElement).checked = true;
     });
   });
 };

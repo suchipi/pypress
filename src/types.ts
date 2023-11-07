@@ -26,10 +26,10 @@ export type Cookie = ReturnType<Page["cookies"]> extends Promise<Array<infer R>>
 export type ChainContext = Partial<{
   browser: Browser;
   page: Page;
-  el: ElementHandle;
-  els: Array<ElementHandle>;
+  el: ElementHandle<HTMLElement>;
+  els: Array<ElementHandle<HTMLElement>>;
   exists: boolean;
-  within: ElementHandle;
+  within: ElementHandle<HTMLElement>;
   cookies: Array<Cookie>;
 }>;
 

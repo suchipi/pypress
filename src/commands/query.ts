@@ -79,7 +79,7 @@ export default (pypress: Pypress) => {
             var Py = window.Pypress;
             Py.els.push(node);
 
-            node.originalOutline = node.style.outline;
+            (node as any).originalOutline = node.style.outline;
             node.style.outline = "2px dotted yellow";
           });
         }
@@ -90,7 +90,7 @@ export default (pypress: Pypress) => {
           var Py = window.Pypress;
           Py.el = node;
 
-          node.originalOutline = node.style.outline;
+          (node as any).originalOutline = node.style.outline;
           node.style.outline = "2px dotted red";
         });
       }
@@ -146,7 +146,7 @@ export default (pypress: Pypress) => {
         }),
     );
 
-    api.writeContext({ els });
+    api.writeContext({ els: els as any });
 
     await py._updateTargetUI();
 
@@ -166,7 +166,7 @@ export default (pypress: Pypress) => {
       el = els[0];
     }
 
-    api.writeContext({ el });
+    api.writeContext({ el: el as ElementHandle<HTMLElement> });
 
     return el;
   });
@@ -190,7 +190,9 @@ export default (pypress: Pypress) => {
   pypress.registerCommand("getInputForLabel", async (command, api) => {
     const text = command.args[0] || "";
     const label = await py.get(`label:withText(${JSON.stringify(text)})`);
-    const forAttr = await label.evaluate((node) => node.htmlFor);
+    const forAttr = await label.evaluate(
+      (node) => (node as HTMLLabelElement).htmlFor,
+    );
     return py.get(`input[id=${forAttr}]`);
   });
 
@@ -201,7 +203,7 @@ export default (pypress: Pypress) => {
     }
 
     const el = els[0];
-    api.writeContext({ el, els: undefined });
+    api.writeContext({ el: el as ElementHandle<HTMLElement>, els: undefined });
     await py._updateTargetUI();
     return el;
   });
@@ -276,7 +278,7 @@ export default (pypress: Pypress) => {
       }
     }
 
-    api.writeContext({ els: newEls });
+    api.writeContext({ els: newEls as Array<ElementHandle<HTMLElement>> });
     await py._updateTargetUI();
     return els;
   });
@@ -294,10 +296,10 @@ export default (pypress: Pypress) => {
 
     const selector = command.args[0];
 
-    let parent: ElementHandle;
+    let parent: ElementHandle<HTMLElement>;
     try {
       const maybeParent = await el.evaluate((node, selector) => {
-        let el = node;
+        let el: HTMLElement | null = node;
 
         while (el) {
           if (el && window.Sizzle(selector).indexOf(el) != -1) {
@@ -315,7 +317,7 @@ export default (pypress: Pypress) => {
         );
       }
 
-      parent = maybeParent;
+      parent = maybeParent as any;
     } catch (error: any) {
       await sleep.async(100);
       return api.retry({ error, maxRetries: 40 }) as any;
@@ -361,7 +363,9 @@ export default (pypress: Pypress) => {
       return py.focused(...command.args);
     }
 
-    const el = await page.evaluateHandle(() => document.activeElement);
+    const el = (await page.evaluateHandle(
+      () => document.activeElement,
+    )) as ElementHandle<HTMLElement>;
 
     api.writeContext({ el });
     await py._updateTargetUI();

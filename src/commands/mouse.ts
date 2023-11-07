@@ -30,8 +30,8 @@ export default (pypress: Pypress) => {
       }
 
       await el.evaluate((node) => {
-        if (node.scrollIntoViewIfNeeded) {
-          node.scrollIntoViewIfNeeded(true);
+        if ((node as any).scrollIntoViewIfNeeded) {
+          (node as any).scrollIntoViewIfNeeded(true);
         } else {
           node.scrollIntoView();
         }
@@ -82,8 +82,8 @@ export default (pypress: Pypress) => {
       }
 
       await el.evaluate((node) => {
-        if (node.scrollIntoViewIfNeeded) {
-          node.scrollIntoViewIfNeeded(true);
+        if ((node as any).scrollIntoViewIfNeeded) {
+          (node as any).scrollIntoViewIfNeeded(true);
         } else {
           node.scrollIntoView();
         }
@@ -134,8 +134,8 @@ export default (pypress: Pypress) => {
       }
 
       await el.evaluate((node) => {
-        if (node.scrollIntoViewIfNeeded) {
-          node.scrollIntoViewIfNeeded(true);
+        if ((node as any).scrollIntoViewIfNeeded) {
+          (node as any).scrollIntoViewIfNeeded(true);
         } else {
           node.scrollIntoView();
         }
@@ -179,8 +179,8 @@ export default (pypress: Pypress) => {
       }
 
       await el.evaluate((node) => {
-        if (node.scrollIntoViewIfNeeded) {
-          node.scrollIntoViewIfNeeded(true);
+        if ((node as any).scrollIntoViewIfNeeded) {
+          (node as any).scrollIntoViewIfNeeded(true);
         } else {
           node.scrollIntoView();
         }

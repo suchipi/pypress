@@ -7,7 +7,7 @@ test("close", () => {
   py.close();
 });
 
-test.only("getDefaultPage", async () => {
+test("getDefaultPage", async () => {
   py.goto(FIXTURES + "/index.html");
   await expect(py).toHaveSelector("h1:withText(index)");
 
@@ -40,7 +40,7 @@ test("evaluate", async () => {
       return [some, input, "strings"].join(" ");
     },
     "Some",
-    "input"
+    "input",
   );
   expect(result).toBe("Some input strings");
 });
