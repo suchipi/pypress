@@ -1,13 +1,13 @@
-test("launch", () => {
-  py.launch();
+it("launch", () => {
+  py.launch({ headless: false });
 });
 
-test("close", () => {
-  py.launch();
+it("close", () => {
+  py.launch({ headless: false });
   py.close();
 });
 
-test("getDefaultPage", async () => {
+it("getDefaultPage", async () => {
   py.goto(FIXTURES + "/index.html");
   await expect(py).toHaveSelector("h1:withText(index)");
 
@@ -18,7 +18,7 @@ test("getDefaultPage", async () => {
   await expect(py).toHaveSelector("h1:withText(index)");
 });
 
-test("newPage", async () => {
+it("newPage", async () => {
   py.goto(FIXTURES + "/index.html");
   await expect(py).toHaveSelector("h1:withText(index)");
 
@@ -26,7 +26,7 @@ test("newPage", async () => {
   await expect(py).not.toHaveSelector("h1:withText(index)");
 });
 
-test("goto", async () => {
+it("goto", async () => {
   py.goto(FIXTURES + "/index.html");
   await expect(py).toHaveSelector("h1:withText(index)");
 
@@ -34,7 +34,7 @@ test("goto", async () => {
   await expect(py).toHaveSelector("h1:withText(other page)");
 });
 
-test("evaluate", async () => {
+it("evaluate", async () => {
   const result = await py.evaluate(
     (some, input) => {
       return [some, input, "strings"].join(" ");
@@ -45,7 +45,7 @@ test("evaluate", async () => {
   expect(result).toBe("Some input strings");
 });
 
-test("evaluateHandle", async () => {
+it("evaluateHandle", async () => {
   const body = await py.evaluateHandle(() => {
     return document.body;
   });
@@ -56,7 +56,7 @@ test("evaluateHandle", async () => {
   expect(isSame).toBe(true);
 });
 
-test("go", async () => {
+it("go", async () => {
   py.goto(FIXTURES + "/index.html");
   await expect(py).toHaveSelector("h1:withText(index)");
 
@@ -70,12 +70,12 @@ test("go", async () => {
   py.expectExists("h1:withText(other page)");
 });
 
-test("hash", async () => {
+it("hash", async () => {
   const hash = await py.hash();
   expect(hash).toMatchInlineSnapshot(`undefined`);
 });
 
-test("location", async () => {
+it("location", async () => {
   const location = await py.location();
   expect(location).toMatchInlineSnapshot();
 
@@ -83,7 +83,7 @@ test("location", async () => {
   expect(host).toMatchInlineSnapshot();
 });
 
-test("reload", async () => {
+it("reload", async () => {
   py.goto(FIXTURES + "/index.html");
   py.evaluate(() => {
     document.write(`<h2>Dynamic content</h2>`);
@@ -93,7 +93,7 @@ test("reload", async () => {
   await expect(py).not.toHaveSelector("h2:withText(dynamic content)");
 });
 
-test("scrollIntoView", async () => {
+it("scrollIntoView", async () => {
   const el = await py.get("h1").first();
   py.evaluate((el) => {
     el.scrollIntoView = () => {

@@ -1,14 +1,27 @@
+const path = require("path");
+const { expect } = require("expect");
+const child_process = require("child_process");
+const { sleep } = require("a-mimir");
 const { makePypress } = require("..");
 
+globalThis.expect = expect;
+
+const child = child_process.exec(`npx http-server fixtures --port 3000`, {
+  cwd: path.resolve(__dirname, ".."),
+});
+
+// wait for http-server to come up
+sleep.sync(400);
+
+globalThis.FIXTURES = "http://localhost:3000";
+
 const py = makePypress();
-global.py = py;
+globalThis.py = py;
 
 afterEach(async () => {
   py.close();
   await py;
 });
-
-global.FIXTURES = "http://localhost:3000";
 
 expect.extend({
   async toHaveSelector(received, selector) {
@@ -23,42 +36,26 @@ expect.extend({
   },
 });
 
-const realTest = test;
-global.test = (description, testerFn) => {
-  realTest(description, async () => {
-    await testerFn();
-    await py;
-  });
-};
-global.test.only = (description, testerFn) => {
-  realTest.only(description, async () => {
-    await testerFn();
-    await py;
-  });
-};
-global.test.skip = (description, testerFn) => {
-  realTest.skip(description, async () => {
-    await testerFn();
-    await py;
-  });
-};
-
-const realIt = it;
-global.it = (description, testerFn) => {
+const realIt = globalThis.it;
+globalThis.it = (description, testerFn) => {
   realIt(description, async () => {
     await testerFn();
     await py;
   });
 };
-global.it.only = (description, testerFn) => {
+globalThis.it.only = (description, testerFn) => {
   realIt.only(description, async () => {
     await testerFn();
     await py;
   });
 };
-global.it.skip = (description, testerFn) => {
+globalThis.it.skip = (description, testerFn) => {
   realIt.skip(description, async () => {
     await testerFn();
     await py;
   });
 };
+
+process.on("exit", () => {
+  child.kill("SIGTERM");
+});
