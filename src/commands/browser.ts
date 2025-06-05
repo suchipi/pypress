@@ -51,7 +51,12 @@ export default (pypress: Pypress) => {
       if (!browser) {
         debug("no browser; re-invoking self after calling py.launch()");
         py.launch();
-        return py.getDefaultPage();
+        return api.retry({
+          error: new Error(
+            "Internal error: py.launch() didn't set browser context",
+          ),
+          maxRetries: 2,
+        }) as never;
       }
 
       debug("awaiting browser.pages()...");
