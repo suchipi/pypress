@@ -8,18 +8,20 @@
   "types": "dist/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "test": "littletest -r tests/setup.js -v --concurrency 1",
+    "test": "env DEBUG='pypress:*' littletest -r tests/setup.js -v --concurrency 1",
     "build": "rm -rf dist && tsc"
   },
   "dependencies": {
     "a-mimir": "^1.0.1",
     "chalk": "^4.1.2",
     "cypress-style-async": "^2.0.0",
+    "debug": "^4.4.1",
     "puppeteer": "^21.5.0",
     "sizzle": "^2.3.10"
   },
   "devDependencies": {
     "@littlethings/test": "^3.2.0",
+    "@types/debug": "^4.1.12",
     "expect": "^29.7.0",
     "http-server": "^14.1.1",
     "prettier": "^3.0.3",

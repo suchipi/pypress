@@ -21,6 +21,7 @@ globalThis.py = py;
 afterEach(async () => {
   py.close();
   await py;
+  await sleep.async(100);
 });
 
 expect.extend({

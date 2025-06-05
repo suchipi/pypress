@@ -9,11 +9,20 @@ import misc from "./commands/misc";
 import mouse from "./commands/mouse";
 import query from "./commands/query";
 import should from "./commands/should";
+import makeDebug from "debug";
+
+const debug = makeDebug("pypress:log");
 
 export function makePypress({
   log = () => {},
 }: { log?: (...args: any) => void } = {}) {
-  const pypress = new Pypress({ log });
+  const pypress = new Pypress({
+    log(...args) {
+      // @ts-ignore unhappy spread due to typedefs of debug
+      debug(...args);
+      log(...args);
+    },
+  });
 
   [
     browser,
