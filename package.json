@@ -14,23 +14,27 @@
   "dependencies": {
     "a-mimir": "^1.0.1",
     "chalk": "^4.1.2",
-    "cypress-style-async": "^2.1.0",
-    "debug": "^4.4.1",
-    "puppeteer": "^21.5.0",
+    "cypress-style-async": "^3.0.0",
+    "debug": "^4.4.3",
+    "puppeteer": "^25.8.0",
     "sizzle": "^2.3.10"
   },
   "devDependencies": {
-    "@littlethings/test": "^3.2.0",
-    "@types/debug": "^4.1.12",
-    "expect": "^29.7.0",
+    "@littlethings/test": "^3.3.2",
+    "@types/debug": "^4.1.13",
+    "expect": "^30.4.1",
     "http-server": "^14.1.1",
-    "prettier": "^3.0.3",
-    "typescript": "^5.2.2"
+    "prettier": "^3.9.6",
+    "typescript": "^7.0.2"
   },
   "author": "Lily Skye <me@suchipi.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/suchipi/pypress.git"
   },
-  "prettier": {}
+  "prettier": {},
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "puppeteer@25.8.0": true
+  }
 }
