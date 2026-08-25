@@ -1,7 +1,9 @@
 import { CypressStyleAsync } from "cypress-style-async";
-import type { CommandsMap, ChainContext } from "./types";
+import type { CommandsMap, ChainContext, PypressChain } from "./types";
 
 export class Pypress extends CypressStyleAsync<CommandsMap, ChainContext> {
+  api!: PypressChain;
+
   constructor({ log = () => {} }: { log?: (...args: any) => void } = {}) {
     super({
       onError: (error) => {

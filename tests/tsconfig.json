@@ -1,14 +1,13 @@
 {
-  "include": ["./src/**/*.ts"],
-  "exclude": ["./tests/**/*"],
+  "include": ["./**/*.ts"],
 
   "compilerOptions": {
     "lib": ["es2020", "dom"],
+    "types": ["node"],
     "target": "es2020",
     "module": "CommonJS",
-    "rootDir": "./src",
-    "outDir": "./dist",
-    "declaration": true,
+    "rootDir": ".",
+    "noEmit": true,
 
     "strict": true,
     "noImplicitAny": false,

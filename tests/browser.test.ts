@@ -64,23 +64,36 @@ it("go", async () => {
   await expect(py).toHaveSelector("h1:withText(other page)");
 
   py.go("back");
-  py.expectExists("h1:withText(index)");
+  py.get("h1:withText(index)");
 
   py.go("forward");
-  py.expectExists("h1:withText(other page)");
+  py.get("h1:withText(other page)");
 });
 
 it("hash", async () => {
   const hash = await py.hash();
-  expect(hash).toMatchInlineSnapshot(`undefined`);
+  expect(hash).toMatchInlineSnapshot(`""`);
 });
 
 it("location", async () => {
   const location = await py.location();
-  expect(location).toMatchInlineSnapshot();
+  expect(location).toMatchInlineSnapshot(`
+    {
+      "hash": "",
+      "host": "",
+      "hostname": "",
+      "href": "about:blank",
+      "origin": "null",
+      "pathname": "blank",
+      "port": "",
+      "protocol": "about:",
+      "search": "",
+      "toString": [Function],
+    }
+  `);
 
   const host = await py.location("host");
-  expect(host).toMatchInlineSnapshot();
+  expect(host).toMatchInlineSnapshot(`""`);
 });
 
 it("reload", async () => {
@@ -94,15 +107,20 @@ it("reload", async () => {
 });
 
 it("scrollIntoView", async () => {
+  py.goto(FIXTURES + "/index.html");
   const el = await py.get("h1").first();
-  py.evaluate((el) => {
+  py.evaluate((el: any) => {
     el.scrollIntoView = () => {
+      // @ts-ignore writing unknown global
       window.didIt = true;
     };
   }, el);
 
   py.scrollIntoView();
 
-  const didIt = await py.evaluate(() => window.didIt);
+  const didIt = await py.evaluate(() => {
+    // @ts-ignore writing unknown global
+    return window.didIt;
+  });
   expect(didIt).toBe(true);
 });

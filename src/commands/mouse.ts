@@ -20,7 +20,7 @@ export default (pypress: Pypress) => {
       await mouse.move(posX, posY);
       await mouse.click(posX, posY, {
         button: "left",
-        clickCount: 1,
+        count: 1,
         delay: 0,
       });
     } else {
@@ -49,7 +49,7 @@ export default (pypress: Pypress) => {
       await mouse.move(posX, posY);
       await mouse.click(posX, posY, {
         button: "left",
-        clickCount: 1,
+        count: 1,
         delay: 0,
       });
     }
@@ -72,7 +72,7 @@ export default (pypress: Pypress) => {
       await mouse.move(posX, posY);
       await mouse.click(posX, posY, {
         button: "right",
-        clickCount: 1,
+        count: 1,
         delay: 0,
       });
     } else {
@@ -101,7 +101,7 @@ export default (pypress: Pypress) => {
       await mouse.move(posX, posY);
       await mouse.click(posX, posY, {
         button: "right",
-        clickCount: 1,
+        count: 1,
         delay: 0,
       });
     }
@@ -124,7 +124,7 @@ export default (pypress: Pypress) => {
       await mouse.move(posX, posY);
       await mouse.click(posX, posY, {
         button: "middle",
-        clickCount: 1,
+        count: 1,
         delay: 0,
       });
     } else {
@@ -153,7 +153,7 @@ export default (pypress: Pypress) => {
       await mouse.move(posX, posY);
       await mouse.click(posX, posY, {
         button: "middle",
-        clickCount: 1,
+        count: 1,
         delay: 0,
       });
     }

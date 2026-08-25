@@ -3,7 +3,7 @@ import type {
   Page,
   ElementHandle,
   KeyInput,
-  PuppeteerLaunchOptions,
+  LaunchOptions as PuppeteerLaunchOptions,
   KeyboardTypeOptions,
   KeyPressOptions,
   KeyDownOptions,
@@ -19,9 +19,8 @@ export type {
   KeyPressOptions,
 };
 
-export type Cookie = ReturnType<Page["cookies"]> extends Promise<Array<infer R>>
-  ? R
-  : never;
+export type Cookie =
+  ReturnType<Page["cookies"]> extends Promise<Array<infer R>> ? R : never;
 
 export type ChainContext = Partial<{
   browser: Browser;
@@ -109,9 +108,6 @@ export type CommandsMap = {
     (elementQuery: string): Promise<void>;
     /** Move the mouse to the specified position and then click. */
     (posX: number, posY: number): Promise<void>;
-
-    // internal intersection because Paramaters helper type is being annoying
-    (selectorOrX?: string | number, posY?: number): Promise<void>;
   };
   rightClick: CommandsMap["click"]; // same type signature
   middleClick: CommandsMap["click"]; // same type signature
@@ -177,4 +173,78 @@ export type CommandsMap = {
 
   /** internal */
   ["should:navigate"](): Promise<void>;
+};
+
+/**
+ * The chainable object callers interact with (ie. `py`).
+ *
+ * `Parameters`/`ReturnType` only see a type's *last* call signature, so the
+ * generated chain drops overloads. Overloaded commands are re-declared by hand
+ * in `ChainOverloads` instead.
+ */
+export type PypressChain<LastReturnValue = undefined> = Omit<
+  GeneratedChain,
+  keyof ChainOverloads
+> &
+  ChainOverloads &
+  Promise<LastReturnValue>;
+
+/** What cypress-style-async generates; correct for every non-overloaded command. */
+type GeneratedChain = {
+  [Key in keyof CommandsMap]: (
+    ...params: Parameters<CommandsMap[Key]>
+  ) => PypressChain<Awaited<ReturnType<CommandsMap[Key]>>>;
+};
+
+/** Chain declarations for the commands in `CommandsMap` that are overloaded. */
+type ChainOverloads = {
+  location: {
+    (): PypressChain<Location>;
+    <Key extends keyof Location>(property: Key): PypressChain<Location[Key]>;
+  };
+
+  logContext: {
+    (): PypressChain<void>;
+    (key: keyof ChainContext): PypressChain<void>;
+  };
+
+  click: ClickChain;
+  rightClick: ClickChain;
+  middleClick: ClickChain;
+  hover: ClickChain;
+  doubleClick: ClickChain;
+  dblclick: ClickChain;
+  rightclick: ClickChain;
+  moveMouse: ClickChain;
+
+  get: GetChain;
+  find: GetChain;
+};
+
+type ClickChain = {
+  /** Click context.el. */
+  (): PypressChain<void>;
+  /** Query for an element using the provided string, then click it. */
+  (elementQuery: string): PypressChain<void>;
+  /** Move the mouse to the specified position and then click. */
+  (posX: number, posY: number): PypressChain<void>;
+
+  // internal; lets command implementations spread `command.args` back into a call
+  (selectorOrX?: string | number, posY?: number): PypressChain<void>;
+};
+
+type GetChain = {
+  (
+    selector: string,
+    options: { allowNonExistent: false },
+  ): PypressChain<ElementHandle>;
+  (
+    selector: string,
+    options: { allowNonExistent: true },
+  ): PypressChain<ElementHandle | undefined>;
+  (
+    selector: string,
+    options: { allowNonExistent?: boolean },
+  ): PypressChain<ElementHandle | undefined>;
+  (selector: string): PypressChain<ElementHandle>;
 };
