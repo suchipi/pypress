@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mouse</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      #target {
+        position: absolute;
+        left: 50px;
+        top: 50px;
+        width: 100px;
+        height: 40px;
+      }
+      #spot {
+        position: absolute;
+        left: 200px;
+        top: 200px;
+        width: 60px;
+        height: 60px;
+        background: #dddddd;
+      }
+      #tall {
+        position: absolute;
+        top: 2000px;
+        left: 50px;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="target">Click Me</button>
+    <div id="spot"></div>
+    <button id="tall">Way Down Here</button>
+
+    <script>
+      window.counts = {
+        click: 0,
+        dblclick: 0,
+        contextmenu: 0,
+        auxButtons: [],
+        mouseover: 0,
+        spotClick: 0,
+        tallClick: 0,
+      };
+
+      var target = document.getElementById("target");
+      target.addEventListener("click", function () {
+        window.counts.click++;
+      });
+      target.addEventListener("dblclick", function () {
+        window.counts.dblclick++;
+      });
+      target.addEventListener("contextmenu", function (event) {
+        event.preventDefault();
+        window.counts.contextmenu++;
+      });
+      target.addEventListener("auxclick", function (event) {
+        window.counts.auxButtons.push(event.button);
+      });
+      target.addEventListener("mouseover", function () {
+        window.counts.mouseover++;
+      });
+
+      document.getElementById("spot").addEventListener("click", function () {
+        window.counts.spotClick++;
+      });
+      document.getElementById("tall").addEventListener("click", function () {
+        window.counts.tallClick++;
+      });
+    </script>
+  </body>
+</html>

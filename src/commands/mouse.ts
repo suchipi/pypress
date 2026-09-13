@@ -64,7 +64,7 @@ export default (pypress: Pypress) => {
     }
 
     if (command.args.length === 1) {
-      py.get(command.args[0] as string).click();
+      py.get(command.args[0] as string).rightClick();
       return;
     } else if (command.args.length === 2) {
       const [posX, posY] = command.args as [number, number];
@@ -116,7 +116,7 @@ export default (pypress: Pypress) => {
     }
 
     if (command.args.length === 1) {
-      py.get(command.args[0] as string).click();
+      py.get(command.args[0] as string).middleClick();
       return;
     } else if (command.args.length === 2) {
       const [posX, posY] = command.args as [number, number];

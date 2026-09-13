@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form</title>
+  </head>
+  <body>
+    <h1>Form</h1>
+
+    <form id="the-form" onsubmit="return false">
+      <label for="username">Username</label>
+      <input id="username" type="text" />
+
+      <label for="alias">Alias</label>
+      <input id="alias" type="text" value="preset" />
+
+      <label for="agree">Agree</label>
+      <input id="agree" type="checkbox" />
+
+      <input id="send" type="submit" value="Send It" />
+    </form>
+
+    <script>
+      window.events = [];
+      var username = document.getElementById("username");
+      ["focus", "blur"].forEach(function (name) {
+        username.addEventListener(name, function () {
+          window.events.push(name);
+        });
+      });
+      ["keydown", "keyup", "keypress"].forEach(function (name) {
+        username.addEventListener(name, function (event) {
+          window.events.push(
+            name + ":" + event.key + (event.shiftKey ? ":shift" : ""),
+          );
+        });
+      });
+    </script>
+  </body>
+</html>

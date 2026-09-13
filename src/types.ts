@@ -108,6 +108,10 @@ export type CommandsMap = {
     (elementQuery: string): Promise<void>;
     /** Move the mouse to the specified position and then click. */
     (posX: number, posY: number): Promise<void>;
+
+    // internal; `Parameters` only sees the last signature, so this is the one
+    // that decides how command implementations read `command.args`
+    (selectorOrX?: string | number, posY?: number): Promise<void>;
   };
   rightClick: CommandsMap["click"]; // same type signature
   middleClick: CommandsMap["click"]; // same type signature

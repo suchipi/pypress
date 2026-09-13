@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>List</title>
+  </head>
+  <body>
+    <h1>List</h1>
+
+    <ul id="fruits">
+      <li class="fruit ripe">Apple</li>
+      <li class="fruit">Banana</li>
+      <li class="fruit ripe">Cherry</li>
+      <li class="fruit">Durian</li>
+    </ul>
+
+    <div id="outer">
+      <div id="inner">
+        <span class="leaf">Inner One</span>
+        <span class="leaf">Inner Two</span>
+      </div>
+    </div>
+    <span class="leaf">Outer Leaf</span>
+
+    <button id="ping">Ping</button>
+    <div id="ping-log"></div>
+
+    <script>
+      document.getElementById("ping").addEventListener("click", function () {
+        document.getElementById("ping-log").textContent = "pinged";
+      });
+    </script>
+  </body>
+</html>

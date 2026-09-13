@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nav</title>
+  </head>
+  <body>
+    <h1>Nav</h1>
+
+    <button id="go">Go</button>
+
+    <script>
+      // Deferred so `py.should("navigate")` can start waiting before the
+      // navigation begins; waitForNavigation misses one already in flight.
+      document.getElementById("go").addEventListener("click", function () {
+        setTimeout(function () {
+          location.href = "other-page.html";
+        }, 500);
+      });
+    </script>
+  </body>
+</html>

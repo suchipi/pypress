@@ -280,7 +280,7 @@ export default (pypress: Pypress) => {
 
     api.writeContext({ els: newEls as Array<ElementHandle<HTMLElement>> });
     await py._updateTargetUI();
-    return els;
+    return newEls;
   });
 
   pypress.registerCommand("not", async (command, api) => {
@@ -298,7 +298,8 @@ export default (pypress: Pypress) => {
 
     let parent: ElementHandle<HTMLElement>;
     try {
-      const maybeParent = await el.evaluate((node, selector) => {
+      // evaluateHandle, not evaluate: evaluate would serialize the node away
+      const maybeParent = await el.evaluateHandle((node, selector) => {
         let el: HTMLElement | null = node;
 
         while (el) {
@@ -311,13 +312,15 @@ export default (pypress: Pypress) => {
         return null;
       }, selector);
 
-      if (!maybeParent) {
+      const parentEl = maybeParent.asElement();
+      if (!parentEl) {
+        await maybeParent.dispose();
         throw new Error(
           `Could not find a parent element matching the selector '${selector}'.`,
         );
       }
 
-      parent = maybeParent as any;
+      parent = parentEl as ElementHandle<HTMLElement>;
     } catch (error: any) {
       await sleep.async(100);
       return api.retry({ error, maxRetries: 40 }) as any;
